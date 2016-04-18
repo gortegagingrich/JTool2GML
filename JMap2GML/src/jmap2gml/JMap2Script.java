@@ -14,163 +14,184 @@ import java.io.*;
  * @author Gabriel
  */
 public class JMap2Script {
-    
-    private GhettoQueue queue;
-    private NotQueue blocks;
-    private NotQueue killers;
-    private NotQueue platforms;
-    private NotQueue other;
+
+    private SimpleQueue queue;
+    private NotDequeue blocks;
+    private NotDequeue killers;
+    private NotDequeue platforms;
+    private NotDequeue other;
     private boolean toFile = true;
     private String str;
     private String fileName;
-    
+
     /**
      * Main logic of the program is here.
+     *
      * @param fName input file from args
      */
     public JMap2Script(String fName) {
         this(fName, true);
     }
-    
+
+    /**
+     * Limited constructor that does not always write to file. Orders platforms
+     * by X ASC, Y ASC TODO: rewrite this at some point
+     *
+     * @param fName
+     * @param f
+     */
     public JMap2Script(String fName, boolean f) {
         toFile = f;
         this.fileName = fName;
-        queue = new GhettoQueue();
-        blocks = new NotQueue();
-        killers = new NotQueue();
-        platforms = new NotQueue();
-        other = new NotQueue();
+        queue = new SimpleQueue();
+        blocks = new NotDequeue();
+        killers = new NotDequeue();
+        platforms = new NotDequeue();
+        other = new NotDequeue();
         str = "";
-        
+
         try {
             readFile(fName);
             File file = new File((fName.substring(0, fName.lastIndexOf(".jmap")) + ".gml"));
             PrintWriter out = new PrintWriter(file);
-            
+
             while (queue.hasNext()) {
                 l2s(queue.dequeue());
             }
             if (toFile) {
                 out.println("// blocks");
             }
-               
+
             str += "\n// blocks\n";
-            
+
             while (blocks.hasNext()) {
                 if (toFile) {
-                    out.println(blocks.dequeue());
+                    out.println(blocks.pop());
                 } else {
-                    str += blocks.dequeue() + "\n";
+                    str += blocks.pop() + "\n";
                 }
             }
-            
+
             if (toFile) {
                 out.println("\n// killers");
             }
-                
+
             str += "\n// killers\n";
-            
+
             while (killers.hasNext()) {
                 if (toFile) {
-                    out.println(killers.dequeue());
+                    out.println(killers.pop());
                 }
-                    
-                str += killers.dequeue() + "\n";
-                
+
+                str += killers.pop() + "\n";
+
             }
-            
+
             if (toFile) {
                 out.println("// platforms");
             }
-                
+
             str += "\n// platforms\n";
-            
+
             while (platforms.hasNext()) {
                 if (toFile) {
-                    out.println(platforms.dequeue());
+                    out.println(platforms.pop());
                 }
-                    
-                str += platforms.dequeue() + "\n";
+
+                str += platforms.pop() + "\n";
             }
-            
+
             if (toFile) {
                 out.println("\n// other objects");
             }
-            
+
             str += "\n// other objects\n";
-            
+
             while (other.hasNext()) {
                 if (toFile) {
-                    out.println(other.dequeue());
+                    out.println(other.pop());
                 }
-                   
-                str += other.dequeue() + "\n";
+
+                str += other.pop() + "\n";
             }
-            
+
             out.close();
-            
-            
+
         } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
-    
+
     /**
-     * Main logic of the program is here.
+     * Automatically orders platforms by X ASC and Y ASC
+     *
      * @param fName input file from args
      * @param f output file
      */
     public JMap2Script(String fName, File f) {
-        queue = new GhettoQueue();
-        blocks = new NotQueue();
-        killers = new NotQueue();
-        platforms = new NotQueue();
-        other = new NotQueue();
-        
+        this(fName, f, false);
+    }
+
+    /**
+     * Main logic of the program is here.
+     *
+     * @param fName input file from args
+     * @param f output file
+     * @param reversePlatforms false = pop, true = remove
+     */
+    public JMap2Script(String fName, File f, boolean reversePlatforms) {
+        queue = new SimpleQueue();
+        blocks = new NotDequeue();
+        killers = new NotDequeue();
+        platforms = new NotDequeue();
+        other = new NotDequeue();
+
         try {
             readFile(fName);
             PrintWriter out = new PrintWriter(f);
-            
+
             while (queue.hasNext()) {
                 l2s(queue.dequeue());
             }
-            
-           out.println("// blocks");
+
+            out.println("// blocks");
             while (blocks.hasNext()) {
-                out.println(blocks.dequeue());
+                out.println(blocks.pop());
             }
-            
+
             out.println("\n// killers");
             while (killers.hasNext()) {
-                out.println(killers.dequeue());
+                out.println(killers.pop());
             }
-            
+
             out.println("\n// platforms");
             while (platforms.hasNext()) {
-                out.println(platforms.dequeue());
+                if (!reversePlatforms) {
+                    out.println(platforms.pop());
+                } else {
+                    out.println(platforms.remove());
+                }
             }
-            
+
             out.println("\n// other objects");
             while (other.hasNext()) {
-                out.println(other.dequeue());
+                out.println(other.pop());
             }
-            
+
             out.close();
-            
-            
+
         } catch (Exception e) {
             System.out.println(e.toString());
         }
     }
-    
+
     public String toString() {
         return str;
     }
-    
-    
+
     /**
      * Parses input file
-     * 
+     *
      * @param fName input file
      * @throws Exception
      */
@@ -179,14 +200,14 @@ public class JMap2Script {
         Scanner in = new Scanner(file);
         String str = "";
         int[] temp = null;
-        
+
         for (int i = 0; i < 5; i++) {
             str = in.nextLine();
         }
-        
+
         int i = 0;
-        
-        for (String s: str.split(" ")) {
+
+        for (String s : str.split(" ")) {
             if (i % 3 == 0) {
                 if (temp != null) {
                     queue.enqueue(temp);
@@ -194,27 +215,30 @@ public class JMap2Script {
                 temp = new int[3];
                 i = 0;
             }
-            
+
             temp[i++] = Integer.parseInt(s);
         }
         queue.enqueue(temp);
-        
+
         in.close();
     }
-    
+
     /**
-     * Sorts tokens by object type, and generates each creation command
-     * for the gml file.
+     * Sorts tokens by object type, and generates each creation command for the
+     * gml file.
+     *
      * @param l {x, y, obj_id}
      */
     private void l2s(int[] l) {
-        String add0 = l[0] >99 ? "" : "0";
-        String add1 = l[1] >99 ? "" : "0";
+        String add0 = l[0] > 99 ? "" : "0";
+        String add1 = l[1] > 99 ? "" : "0";
         String out = "instance_create(" + add0 + Integer.toString(l[0]) + "," + add1 + Integer.toString(l[1]);
         int queueID = 0;
-        
+
+        // In the future, this should read from an external table to allow for 
+        // easy substitutions.
         switch (l[2]) {
-            
+
             case 1:
                 out += ",objBlock)";
                 queueID = 1;
@@ -223,7 +247,7 @@ public class JMap2Script {
                 out += ",objMiniBlock)";
                 queueID = 1;
                 break;
-                
+
             case 3:
                 out += ",objSpikeUp)";
                 queueID = 2;
@@ -260,39 +284,39 @@ public class JMap2Script {
                 out += ",objCherry)";
                 queueID = 2;
                 break;
-                
+
             case 15:
                 out += ",objWater2)";
                 break;
-                
+
             case 12:
                 out += ",objSave)";
                 break;
-            
+
             case 13:
                 out += ",objMovingPlatform)";
                 queueID = 3;
                 break;
-                
+
             case 16:
                 out += ",objWalljumpL)";
                 break;
             case 17:
                 out += ",objWalljumpR)";
                 break;
-                
+
             case 20:
                 out += ",objPlayerStart)";
                 break;
-                
+
             case 21:
                 out += ",objWarpAutosaveNext)";
                 break;
-            
+
             default:
-                out = "//INVALID OBJECT ID: "+ l[2] + out + ");";
+                out = "//INVALID OBJECT ID: " + l[2] + out + ");";
         }
-        
+
         switch (queueID) {
             case 1:
                 // for blocks
@@ -314,52 +338,53 @@ public class JMap2Script {
     }
 
     protected String getFileName() {
-        return fileName; //To change body of generated methods, choose Tools | Templates.
+        return fileName;
     }
-    
-    
-    
+
 }
 
 /**
  * Barebones queue used to store symbols as int arrays
+ *
  * @author Gabriel
  */
-class GhettoQueue {
+class SimpleQueue {
+
     // {{x, y, obj_ID},...}
+
     int[][] data = {};
-    
+
     /**
      * Adds item to the end of the data array.
+     *
      * @param l {x,y,obj_ID}
      */
     void enqueue(int[] l) {
         data = Arrays.copyOf(data, data.length + 1);
-        data[data.length - 1] = Arrays.copyOf(l,l.length);
+        data[data.length - 1] = Arrays.copyOf(l, l.length);
     }
-    
+
     /**
      * Removes item at index 0.
+     *
      * @return data[0]
      */
     int[] dequeue() {
-        int[] out = Arrays.copyOf(data[0],data[0].length);
-        int[][] temp = Arrays.copyOf(data,data.length - 1);
+        int[] out = Arrays.copyOf(data[0], data[0].length);
+        int[][] temp = Arrays.copyOf(data, data.length - 1);
         int i = 0;
-        
-        for (int[] l: temp) {
+
+        for (int[] l : temp) {
             temp[i] = data[++i];
         }
-        
+
         data = temp;
-        
+
         return out;
     }
-    
+
     /**
-     * @return 
-     *          empty -> false
-     *          else -> true
+     * @return empty -> false else -> true
      */
     boolean hasNext() {
         return (data.length > 0);
@@ -367,56 +392,66 @@ class GhettoQueue {
 }
 
 /**
- * Alternate implementation of GhettoQueue that handles strings and is
- * no longer FIFO due to the data being sorted when an item is added.
- * This is not actually a queue.
- * 
+ * Simple version of a double ended queue that sorts the contents when an item
+ * is added. Some objects have different properties depending on the order
+ * they're placed, so it would be useful to be able to reverse it if if needed.
+ *
  * @author Gabriel
  */
-class NotQueue {
+class NotDequeue {
+
     String[] data = {};
-    
+
     /**
      * Adds an item to data and sorts data.
-     * 
+     *
      * @param l Creation command for gml file
      */
     void enqueue(String l) {
         data = Arrays.copyOf(data, data.length + 1);
         data[data.length - 1] = l;
         Arrays.sort(data);
-        String temp = "";
-        
+        String temp;
+
         for (int i = 0; i < data.length / 2; i++) {
             temp = data[i];
             data[i] = data[data.length - 1 - i];
             data[data.length - 1 - i] = temp;
         }
     }
-    
+
     /**
-     * Removes the first item from data.
-     * 
-     * @return creation command for gml file
+     * Removes and returns the first item from data.
+     *
+     * @return first creation command in the structure.
      */
-    String dequeue() {
+    String pop() {
         String out = data[0];
-        String[] temp = Arrays.copyOf(data,data.length - 1);
+        String[] temp = Arrays.copyOf(data, data.length - 1);
         int i = 0;
-        
-        for (String l: temp) {
+
+        for (String l : temp) {
             temp[i] = data[++i];
         }
-        
+
         data = temp;
-        
+
         return out;
     }
-    
-     /**
-     * @return 
-     *          empty -> false
-     *          else -> true
+
+    /**
+     * Removes and returns final item from data
+     *
+     * @return final creation command in the structure.
+     */
+    String remove() {
+        String out = data[data.length - 1];
+        data = Arrays.copyOf(data, data.length - 1);
+        return out;
+    }
+
+    /**
+     * @return empty -> false else -> true
      */
     boolean hasNext() {
         return (data.length > 0);
