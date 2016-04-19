@@ -5,6 +5,8 @@
  */
 package jmap2gml;
 
+import javax.swing.SwingUtilities;
+
 /**
  *
  * @author Gabriel
@@ -18,7 +20,8 @@ public class JMap2GML {
     public static void main(String[] args) {
         if (args.length != 1) {
             System.err.println("No arguments passed.\nUsing GUI.");
-            JMap2ScriptGui.main(args);
+            Runnable r = () -> new JMap2ScriptGui();
+            SwingUtilities.invokeLater(r);
         }   else {
             new JMap2Script(args[0]);
         }
