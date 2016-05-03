@@ -11,80 +11,118 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 /**
-     * JPanel used to provide a visual preview of the room
+ * JPanel used to provide a visual preview of the room
+ */
+class Preview extends JPanel {
+
+    private boolean showGrid;
+
+    // holds all the supported items in the room.
+    protected Item[] items;
+
+    /**
+     * currently initializes with a few items I used to test the draw methods
      */
-    class Preview extends JPanel {
+    protected Preview() {
 
-        // holds all the supported items in the room.
-        protected Item[] items;
+        items = new Item[]{};
+        showGrid = true;
 
-        /**
-         * currently initializes with a few items I used to test the draw
-         * methods
-         */
-        protected Preview() {
-            Item item1 = new Item(new String[]{"384", "352", "objSpikeUp"});
-            Item item2 = new Item(new String[]{"416", "352", "objSpikeLeft"});
-            Item item3 = new Item(new String[]{"384", "384", "objSpikeDown"});
-            Item item4 = new Item(new String[]{"416", "416", "objSpikeRight"});
-            Item item5 = new Item(new String[]{"384", "448", "objMovingPlatform"});
-            Item item6 = new Item(new String[]{"384", "384", "objWater2"});
+        setPreferredSize(new Dimension(800, 608));
+        setVisible(true);
+    }
 
-            items = new Item[]{new Item(new String[]{"384", "416", "objBlock"}), item1, item2, item3, item4, item5, item6};
+    /**
+     * Recreates the items array and adds each valid item that gets created by
+     * the script. Also supports simple use of variables to set xscale and
+     * yscale.
+     *
+     * @param str {{x,y,objID},...}
+     */
+    protected void setItems(String[] str) {
+        items = new Item[str.length];
+        int i = 0;
+        double d;
+        int end;
+        Item prev = null;
 
-            setPreferredSize(new Dimension(800, 608));
-            setVisible(true);
-        }
+        for (String s : str) {
+            end = (s.charAt(s.length() - 1) == ';') ? (s.length() - 2) : (s.length() - 1);
 
-        /**
-         * Recreates the items array and adds each valid item that gets created
-         * by the script.
-         *
-         * @param str {{x,y,objID},...}
-         */
-        protected void setItems(String[] str) {
-            items = new Item[str.length];
-            int i = 0;
-            int end;
+            if (s.length() > 1) {
+                if (s.charAt(0) == 'o' && s.length() > 5) {
+                    switch (s.charAt(1)) {
+                        case ' ': // o = insta...
+                            items[i] = new Item(s.substring(20, end).split(","));
+                            prev = items[i];
+                            break;
 
-            for (String s : str) {
-                if (s.length() >= 20) {
-                    //try {
-                    end = (s.charAt(s.length() - 1) == ';') ? (s.length() - 2) : (s.length() - 1);
+                        case '.': // o.image_...
+                            if (prev != null) {
+                                switch (s.substring(2, 14)) {
+                                    case "image_xscale":
+                                        d = Double.parseDouble(s.split(" = ")[1].split(";")[0]);
+                                        prev.setXscale(d);
+                                        break;
+
+                                    case "image_yscale":
+                                        d = Double.parseDouble(s.split(" = ")[1].split(";")[0]);
+                                        prev.setYscale(d);
+                                        break;
+
+                                    default:
+                                    // do nothing
+                                }
+                            }
+                            break;
+
+                        default:
+                        // do nothing
+                    }
+
+                    i++;
+                } else if (s.charAt(0) == 'i' && s.length() >= 20) {
                     items[i] = new Item(s.substring(16, end).split(","));
                     i += 1;
                 }
             }
-
-            this.paintComponent(this.getGraphics());
         }
 
-        @Override
-        public void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            
-            g.setColor(Color.WHITE);
-            g.fillRect(0, 0, 800, 608);
-            
+        paintComponent(getGraphics());
+    }
+
+    protected void toggleGrid() {
+        showGrid = !showGrid;
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, 800, 608);
+
+        if (showGrid) {
             g.setColor(new Color(244, 244, 244, 255));
-            g.drawLine(0,0,0,608);
-            g.drawLine(0,0,800,0);
-            g.drawLine(800,0,800,608);
-            g.drawLine(0,608,800,608);
-            
+            g.drawLine(0, 0, 0, 608);
+            g.drawLine(0, 0, 800, 0);
+            g.drawLine(800, 0, 800, 608);
+            g.drawLine(0, 608, 800, 608);
+
             for (int i = 31; i < 799; i += 32) {
                 g.drawRect(i, 0, 1, 608);
             }
-            
-            for (int i = 31; i < 607; i+= 32) {
-                g.drawRect(0,i,800,1);
-            }
 
-            for (Item i : items) {
-                if (i != null) {
-                    i.draw(g);
-                }
+            for (int i = 31; i < 607; i += 32) {
+                g.drawRect(0, i, 800, 1);
             }
         }
 
+        for (Item i : items) {
+            if (i != null) {
+                i.draw(g);
+            }
+        }
     }
+
+}

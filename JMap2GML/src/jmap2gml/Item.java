@@ -16,6 +16,7 @@ import java.util.Arrays;
 class Item {
 
         private int x, y;
+        private double image_xscale, image_yscale;
         private final String type;
 
         /**
@@ -30,19 +31,30 @@ class Item {
             } catch (Exception e) {
                 System.err.println(Arrays.toString(str));
             }
+            
+            image_xscale = 1;
+            image_yscale = 1;
             type = str[2];
+        }
+        
+        protected void setXscale(double d) {
+            image_xscale = d;
+        }
+        
+        protected void setYscale(double d) {
+            image_yscale = d;
         }
 
         public void draw(Graphics g) {
             switch (type) {
                 case "objBlock":
                     g.setColor(new Color(0xBBBBBB));
-                    g.fillRect(x, y, 31, 31);
+                    g.fillRect(x, y, (int)(32 * image_xscale - 1), 31);
                     g.setColor(Color.BLACK);
-                    g.drawRect(x, y, 31, 31);
+                    g.drawRect(x, y, (int)(32 * image_xscale - 1), 31);
                     g.setColor(new Color(0x111111));
-                    g.drawLine(x, y, x + 31, y + 31);
-                    g.drawLine(x, y + 31, x + 31, y);
+                    g.drawLine(x, y, x + (int)(32 * image_xscale - 1), y + 31);
+                    g.drawLine(x, y + 31, x + (int)(32 * image_xscale - 1), y);
                     break;
 
                 case "objMiniBlock":
