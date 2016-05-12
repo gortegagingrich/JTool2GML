@@ -47,7 +47,8 @@ class Preview extends JPanel {
         Item prev = null;
 
         for (String s : str) {
-            end = (s.charAt(s.length() - 1) == ';') ? (s.length() - 2) : (s.length() - 1);
+            end = (s.length() > 2 && s.charAt(s.length() - 1) == ';') ? 
+                    (s.length() - 2) : (s.length() - 1);
 
             if (s.length() > 1) {
                 if (s.charAt(0) == 'o' && s.length() > 5) {
@@ -103,7 +104,7 @@ class Preview extends JPanel {
         g.fillRect(0, 0, 800, 608);
 
         if (showGrid) {
-            g.setColor(new Color(244, 244, 244, 255));
+            g.setColor(new Color(222, 222, 222, 255));
             g.drawLine(0, 0, 0, 608);
             g.drawLine(0, 0, 800, 0);
             g.drawLine(800, 0, 800, 608);

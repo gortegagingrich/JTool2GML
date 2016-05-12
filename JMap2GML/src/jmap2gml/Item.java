@@ -13,150 +13,143 @@ import java.util.Arrays;
  *
  * @author gabrielo
  */
-class Item {
-
-        private int x, y;
-        private double image_xscale, image_yscale;
-        private final String type;
-
-        /**
-         *
-         * @param str {arg0, arg1, arg2}
-         */
-        protected Item(String[] str) {
-            assert str.length == 3;
-            try {
-                x = Integer.parseInt(str[0]);
-                y = Integer.parseInt(str[1]);
-            } catch (Exception e) {
-                System.err.println(Arrays.toString(str));
+public class Item {
+    private int x,y;
+    private int[] xArr, yArr;
+    private double xScale, yScale;
+    private Color color1, color2;
+    
+    /**
+     * 
+     * @param str {x,y,ID}
+     */
+    public Item(String[] str) {
+        assert(str.length == 3);
+        
+        x = Integer.parseInt(str[0]);
+        y = Integer.parseInt(str[1]);
+        
+        xScale = 1;
+        yScale = 1;
+        
+        switch (str[2]) {
+            case "objBlock":
+                xArr = new int[] {0, 31, 31, 0};
+                yArr = new int[] {0, 0, 31, 31};
+                setColors(new Color(0xBBBBBB), Color.BLACK);
+                break;
+                
+            case "objMovingPlatform":
+                xArr = new int[] {0, 31, 31, 0};
+                yArr = new int[] {0, 0, 15, 15};
+                setColors(new Color(139, 69, 19, 100), 
+                        new Color(139, 69, 19, 255));
+                break;
+                
+            case "objWater2":
+                xArr = new int[] {0, 31, 31, 0};
+                yArr = new int[] {0, 0, 31, 31};
+                setColors(new Color(0, 255, 255, 100), 
+                        new Color(0, 255, 255, 100));
+                break;
+                
+            case "objMiniBlock":
+                xArr = new int[] {0, 15, 15, 0};
+                yArr = new int[] {0, 0, 15, 15};
+                setColors(new Color(0xBBBBBB), Color.BLACK);
+                break;
+                
+            case "objSpikeUp":
+                xArr = new int[] {0, 15, 16, 31};
+                yArr = new int[] {31, 0, 0, 31};
+                setColors(new Color(0, 0, 255, 100), Color.BLUE);
+                break;
+                
+            case "objSpikeDown":
+                xArr = new int[] {0, 15, 16, 31};
+                yArr = new int[] {0, 31, 31, 0};
+                setColors(new Color(0, 0, 255, 100), Color.BLUE);
+                break;
+                
+            case "objSpikeRight":
+                xArr = new int[] {0, 31, 31, 0};
+                yArr = new int[] {0, 15, 16, 31};
+                setColors(new Color(0, 0, 255, 100), Color.BLUE);
+                break;
+                
+            case "objSpikeLeft":
+                xArr = new int[] {31, 0, 0, 31};
+                yArr = new int[] {0, 15, 16, 31};
+                setColors(new Color(0, 0, 255, 100), Color.BLUE);
+                break;
+                
+            case "objMiniUp":
+                xArr = new int[] {0, 7, 8, 15};
+                yArr = new int[] {15, 0, 0, 15};
+                setColors(new Color(0, 0, 255, 100), Color.BLUE);
+                break;
+                
+            case "objMiniDown":
+                xArr = new int[] {0, 7, 8, 15};
+                yArr = new int[] {0, 15, 15, 0};
+                setColors(new Color(0, 0, 255, 100), Color.BLUE);
+                break;
+                
+            case "objMiniRight":
+                xArr = new int[] {0, 15, 15, 0};
+                yArr = new int[] {0, 7, 8, 15};
+                setColors(new Color(0, 0, 255, 100), Color.BLUE);
+                break;
+                
+            case "objMiniLeft":
+                xArr = new int[] {15, 0, 0, 15};
+                yArr = new int[] {0, 7, 8, 15};
+                setColors(new Color(0, 0, 255, 100), Color.BLUE);
+                break;
+            
+            default:
+                // not a recognized object id
+        }
+    }
+    
+    void draw(Graphics g) {
+        int[] xx, yy;
+        xx = Arrays.copyOf(xArr, xArr.length);
+        yy = Arrays.copyOf(yArr, yArr.length);
+        
+        for (int i = 0; i < yArr.length; i++) {
+            if (xScale != 1 && xx[i] != 0) {
+                xx[i] += 1;
+                xx[i] = x + (int)(xScale * xx[i] - 1);
+            } else {
+                xx[i] = x + xx[i];
             }
             
-            image_xscale = 1;
-            image_yscale = 1;
-            type = str[2];
+            if (yScale != 1 && yy[i] != 0) {
+                yy[i] += 1;
+                yy[i] = y + (int)(yScale * yy[i] - 1);
+            } else {
+                yy[i] = y + (int)(yScale * yy[i]);
+            }
         }
         
-        protected void setXscale(double d) {
-            image_xscale = d;
-        }
+        g.setColor(color1);
+        g.fillPolygon(xx, yy, yArr.length);
         
-        protected void setYscale(double d) {
-            image_yscale = d;
-        }
-
-        public void draw(Graphics g) {
-            switch (type) {
-                case "objBlock":
-                    g.setColor(new Color(0xBBBBBB));
-                    g.fillRect(x, y, (int)(32 * image_xscale - 1), 31);
-                    g.setColor(Color.BLACK);
-                    g.drawRect(x, y, (int)(32 * image_xscale - 1), 31);
-                    g.setColor(new Color(0x111111));
-                    g.drawLine(x, y, x + (int)(32 * image_xscale - 1), y + 31);
-                    g.drawLine(x, y + 31, x + (int)(32 * image_xscale - 1), y);
-                    break;
-
-                case "objMiniBlock":
-                    g.setColor(new Color(0xBBBBBB));
-                    g.fillRect(x, y, 15, 15);
-                    g.setColor(Color.BLACK);
-                    g.drawRect(x, y, 15, 15);
-                    g.setColor(new Color(0x111111));
-                    g.drawLine(x, y, x + 15, y + 15);
-                    g.drawLine(x, y + 15, x + 15, y);
-                    break;
-
-                case "objSpikeUp":
-                    g.setColor(new Color(0, 0, 255, 100));
-                    g.fillPolygon(new int[]{x, x + 15, x + 16, x + 31}, new int[]{y + 31, y, y, y + 31}, 4);
-                    g.setColor(Color.BLUE);
-                    g.drawPolygon(new int[]{x, x + 15, x + 16, x + 31}, new int[]{y + 31, y, y, y + 31}, 4);
-                    break;
-
-                case "objSpikeRight":
-                    g.setColor(new Color(0, 0, 255, 100));
-                    g.fillPolygon(new int[]{x, x + 31, x + 31, x}, new int[]{y, y + 15, y + 16, y + 31}, 4);
-                    g.setColor(Color.BLUE);
-                    g.drawPolygon(new int[]{x, x + 31, x + 31, x}, new int[]{y, y + 15, y + 16, y + 31}, 4);
-                    break;
-
-                case "objSpikeLeft":
-                    g.setColor(new Color(0, 0, 255, 100));
-                    g.fillPolygon(new int[]{x + 31, x, x, x + 31}, new int[]{y, y + 15, y + 16, y + 31}, 4);
-                    g.setColor(Color.BLUE);
-                    g.drawPolygon(new int[]{x + 31, x, x, x + 31}, new int[]{y, y + 15, y + 16, y + 31}, 4);
-                    break;
-
-                case "objSpikeDown":
-                    g.setColor(new Color(0, 0, 255, 100));
-                    g.fillPolygon(new int[]{x, x + 15, x + 16, x + 31}, new int[]{y, y + 31, y + 31, y}, 4);
-                    g.setColor(Color.BLUE);
-                    g.drawPolygon(new int[]{x, x + 15, x + 16, x + 31}, new int[]{y, y + 31, y + 31, y}, 4);
-                    break;
-
-                case "objMovingPlatform":
-                    g.setColor(new Color(139, 69, 19, 100));
-                    g.fillRect(x, y, 31, 15);
-                    g.setColor(new Color(139, 69, 19));
-                    g.drawRect(x, y, 31, 15);
-                    g.drawRect(x + 1, y + 1, 29, 13);
-                    break;
-
-                case "objWater2":
-                    g.setColor(new Color(0, 255, 255, 100));
-                    g.fillRect(x, y, 32, 32);
-                    break;
-
-                case "objMiniUp":
-                    g.setColor(new Color(0, 0, 255, 100));
-                    g.fillPolygon(new int[]{x, x + 7, x + 8, x + 15}, new int[]{y + 15, y, y, y + 15}, 4);
-                    g.setColor(Color.BLUE);
-                    g.drawPolygon(new int[]{x, x + 7, x + 8, x + 15}, new int[]{y + 15, y, y, y + 15}, 4);
-                    break;
-
-                case "objMiniLeft":
-                    g.setColor(new Color(0, 0, 255, 100));
-                    g.fillPolygon(new int[]{x + 15, x, x, x + 15}, new int[]{y, y + 7, y + 8, y + 15}, 4);
-                    g.setColor(Color.BLUE);
-                    g.drawPolygon(new int[]{x + 15, x, x, x + 15}, new int[]{y, y + 7, y + 8, y + 15}, 4);
-                    break;
-
-                case "objMiniRight":
-                    g.setColor(new Color(0, 0, 255, 100));
-                    g.fillPolygon(new int[]{x, x + 15, x + 15, x}, new int[]{y, y + 7, y + 8, y + 15}, 4);
-                    g.setColor(Color.BLUE);
-                    g.drawPolygon(new int[]{x, x + 15, x + 15, x}, new int[]{y, y + 7, y + 8, y + 15}, 4);
-                    break;
-
-                case "objMiniDown":
-                    g.setColor(new Color(0, 0, 255, 100));
-                    g.fillPolygon(new int[]{x, x + 7, x + 8, x + 15}, new int[]{y, y + 15, y + 15, y}, 4);
-                    g.setColor(Color.BLUE);
-                    g.drawPolygon(new int[]{x, x + 7, x + 8, x + 15}, new int[]{y, y + 15, y + 15, y}, 4);
-                    break;
-
-                case "objSave":
-                    g.setColor(Color.GREEN);
-                    g.fillRoundRect(x + 4, y + 4, 24, 24, 6, 6);
-                    g.setColor(Color.BLACK);
-                    g.drawRoundRect(x + 4, y + 4, 24, 24, 6, 6);
-                    break;
-
-                case "objWarpAutosaveNext":
-                    g.setColor(Color.WHITE);
-                    g.fillOval(x + 4, y + 4, 24, 24);
-                    g.setColor(Color.BLACK);
-                    g.drawOval(x + 4, y + 4, 24, 24);
-                    break;
-
-                case "objPlayerStart":
-                    g.setColor(Color.BLUE);
-                    g.fillRect(x + 12, y + 11, 11, 21);
-                    break;
-
-                default:
-                // do nothing
-                }
-        }
+        g.setColor(color2);
+        g.drawPolygon(xx, yy, yArr.length);
+    }
+    
+    private void setColors(Color c1, Color c2) {
+        color1 = c1;
+        color2 = c2;
+    }
+    
+    void setXscale(double i) {
+        xScale = i;
+    }
+    
+    void setYscale(double i) {
+        yScale = i;
+    }
 }

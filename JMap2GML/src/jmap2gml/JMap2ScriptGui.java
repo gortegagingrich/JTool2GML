@@ -5,11 +5,9 @@
  */
 package jmap2gml;
 
-import jmap2gml.JMap2Script;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
