@@ -8,6 +8,7 @@ package jmap2gml;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.Arrays;
 import javax.swing.JPanel;
 
 /**
@@ -96,9 +97,11 @@ class Preview extends JPanel {
         showGrid = !showGrid;
     }
 
+    // todo: draw order should be based on depth
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        Object[] temp;
 
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, 800, 608);
@@ -118,12 +121,28 @@ class Preview extends JPanel {
                 g.drawRect(0, i, 800, 1);
             }
         }
+        
+        temp = Arrays.copyOf(items, items.length);
+        temp = cleanArray(temp);
+        Arrays.sort(temp);
 
-        for (Item i : items) {
+        for (Object i : temp) {
             if (i != null) {
-                i.draw(g);
+                ((Item)i).draw(g);
             }
         }
     }
 
+    private Object[] cleanArray(Object[] arr) {
+        Object[] temp = new Object[] {};
+        
+        for (Object o: arr) {
+            if (o != null) {
+                temp = Arrays.copyOf(temp, temp.length + 1);
+                temp[temp.length - 1] = o;
+            }
+        }
+        
+        return temp;
+    }
 }
