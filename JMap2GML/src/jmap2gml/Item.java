@@ -14,11 +14,11 @@ import java.util.Arrays;
  * @author gabrielo
  */
 public class Item implements Comparable {
-    private int x,y;
-    private int[] xArr, yArr;
-    private double xScale, yScale;
-    private Color color1, color2;
-    private int depth;
+    protected int x,y;
+    protected int[] xArr, yArr;
+    protected double xScale, yScale;
+    protected Color color1, color2;
+    protected int depth;
     
     /**
      * 
@@ -147,6 +147,14 @@ public class Item implements Comparable {
                 setData(new int[] {4, 28, 28, 4},
                         new int[] {4, 4, 28, 28},
                         new Color(0, 255, 0, 100), 
+                        new Color(0, 0, 0, 255),
+                        99);
+                break;
+                
+            case "objWarpAutosaveNext":
+                setData(new int[] {21, 11, 5, 5, 11, 21, 27, 27},
+                        new int[] {5, 5, 11, 21, 27, 27, 21, 11},
+                        new Color(255, 255, 255, 100), 
                         new Color(0, 0, 0, 255),
                         99);
                 break;
