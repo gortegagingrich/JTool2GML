@@ -1,22 +1,6 @@
 instance_create(32,32,objBlock);
-o = instance_create(32,64,objBlock);
+instance_create(32,64,objBlock);
 instance_create(64,32,objBlock);
-//instance_create(32,96,objBlock);
-o.image_yscale = 2;
+instance_create(32,96,objBlock);
 o = instance_create(64,96,objBlock);
 o.image_xscale = 2;
-
-instance_create(192,96,objMovingPlatform);
-instance_create(128,96,objSpikeRight);
-instance_create(96,32,objSpikeRight);
-instance_create(160,128,objSpikeUp);
-instance_create(160,160,objSpikeDown);
-instance_create(160,64,objSpikeLeft);
-instance_create(192,64,objSpikeRight);
-instance_create(128,0,objSpikeDown);
-
-instance_create(64,64,objPlayerStart);
-instance_create(64,0,objSpikeUp);
-instance_create(96,64,objSave);
-
-instance_create(128,128,objWarpAutosaveNext);
