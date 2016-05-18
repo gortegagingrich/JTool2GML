@@ -55,7 +55,7 @@ class Preview extends JPanel {
                 if (s.charAt(0) == 'o' && s.length() > 5) {
                     switch (s.charAt(1)) {
                         case ' ': // o = insta...
-                            items[i] = new Item(s.substring(20, end).split(","));
+                            items[i] = new ItemFromFile(s.substring(20, end).split(","));
                             prev = items[i];
                             break;
 
@@ -84,7 +84,7 @@ class Preview extends JPanel {
 
                     i++;
                 } else if (s.charAt(0) == 'i' && s.length() >= 20) {
-                    items[i] = new Item(s.substring(16, end).split(","));
+                    items[i] = new ItemFromFile(s.substring(16, end).split(","));
                     i += 1;
                 }
             }
