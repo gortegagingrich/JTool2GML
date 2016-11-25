@@ -5,7 +5,6 @@
 package jmap2gml;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.beans.*;
 import java.util.HashMap;
 import javax.swing.*;
@@ -78,7 +77,7 @@ public class TextLineNumber extends JPanel
 
 		setFont( component.getFont() );
 
-		setBorderGap( 5 );
+		setBorderGap( 3 );
 		setCurrentLineForeground( Color.BLUE );
 		setDigitAlignment( RIGHT );
 		setMinimumDisplayDigits( minimumDisplayDigits );

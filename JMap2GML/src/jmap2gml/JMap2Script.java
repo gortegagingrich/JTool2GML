@@ -5,9 +5,10 @@
  */
 package jmap2gml;
 
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.io.*;
 
 /**
  *
@@ -230,9 +231,21 @@ public class JMap2Script {
      * @param l {x, y, obj_id}
      */
     private void l2s(int[] l) {
-        String add0 = l[0] > 99 ? "" : "0";
-        String add1 = l[1] > 99 ? "" : "0";
-        String out = "instance_create(" + add0 + Integer.toString(l[0]) + "," + add1 + Integer.toString(l[1]);
+       String add0, add1, out;
+       
+       if (l[0] < 99 && l[0] >= 0) {
+          add0 = "0";
+       } else {
+          add0 = "";
+       }
+       
+       if (l[1] < 99 && l[1] >= 0) {
+          add1 = "0";
+       } else {
+          add1 = "";
+       }
+       
+        out = "instance_create(" + add0 + Integer.toString(l[0]) + "," + add1 + Integer.toString(l[1]);
         int queueID = 0;
 
         // In the future, this should read from an external table to allow for 

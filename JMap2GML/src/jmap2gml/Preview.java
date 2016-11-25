@@ -84,6 +84,7 @@ class Preview extends JPanel {
 
                     i++;
                 } else if (s.charAt(0) == 'i' && s.length() >= 20) {
+                   System.out.println(s);
                     items[i] = new ItemFromFile(s.substring(16, end).split(","));
                     i += 1;
                 }

@@ -7,6 +7,7 @@ package jmap2gml;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 /**
@@ -34,7 +35,6 @@ public class ItemFromFile extends Item {
             
             while (s.hasNext()) {
                 tmp = s.nextLine().split(";");
-                System.out.println(tmp[0]);
                 
                 if (tmp.length > 0 && tmp[0].equals(objId)) {
                     // get x values
@@ -77,8 +77,8 @@ public class ItemFromFile extends Item {
                     depth = Integer.parseInt(tmp[5]);
                 }
             }
-        } catch (Exception e) {
-            
+        } catch (FileNotFoundException | NumberFormatException e) {
+            // in case anything goes wrong
         }
     }
     
