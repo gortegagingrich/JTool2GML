@@ -46,9 +46,10 @@ public class JMap2ScriptGui extends JFrame {
          prevDirectory = configReader.nextLine();
 
          configReader.close();
-      } catch (FileNotFoundException ex) {
+      } catch (Exception ex) {
          Logger.getLogger(JMap2ScriptGui.class.getName()).
                  log(Level.SEVERE, null, ex);
+         prevDirectory = "";
       }
 
       setTitle("jmap to gml script converter");
@@ -61,8 +62,9 @@ public class JMap2ScriptGui extends JFrame {
 
       JScrollPane jsp = new JScrollPane(jta);
       jsp.setRowHeaderView(new TextLineNumber(jta));
-      jsp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-      jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+      jsp.setHorizontalScrollBarPolicy(
+              JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+      jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
       // menu bar
       JMenuBar menubar = new JMenuBar();
@@ -112,7 +114,7 @@ public class JMap2ScriptGui extends JFrame {
       writeFile = new JMenuItem("Write file");
       writeFile.addActionListener(ae -> {
          if (jm2s != null) {
-            PrintWriter out = null;
+            PrintWriter out;
             try {
                File f = new File(jm2s.getFileName().substring(0, jm2s.
                        getFileName().lastIndexOf(".jmap")) + ".gml");
@@ -157,21 +159,15 @@ public class JMap2ScriptGui extends JFrame {
       JScrollPane scrollPane = new JScrollPane(drawPanel);
 
       // add preview panel to the window
-      scrollPane.setHorizontalScrollBar(scrollPane.createHorizontalScrollBar());
-      scrollPane.setVerticalScrollBar(scrollPane.createVerticalScrollBar());
-      scrollPane.setHorizontalScrollBarPolicy(
-              JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-      scrollPane.setVerticalScrollBarPolicy(
-              JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-
+      //scrollPane.setHorizontalScrollBar(scrollPane.createHorizontalScrollBar());
+      //scrollPane.setVerticalScrollBar(scrollPane.createVerticalScrollBar());
+      //scrollPane.setHorizontalScrollBarPolicy(
+      //        JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+      //scrollPane.setVerticalScrollBarPolicy(
+      //        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
       add(scrollPane, 1);
 
-        // The windows 10 window border is around 8 pixels wide and 52 pixels
-      // tall, but I didn't set it until here because I don't know the
-      // dimensions of the menubar.
-      // The height of the preview window needs to be 608 pixels high because
-      // the rooms are generally made on a 32 or 16 pixel grid.
-      setSize(1000, 480 + 52 + menubar.getHeight());
+      pack();
       setVisible(true);
       drawPanel.setItems(jta.getText().split("\n"));
    }
