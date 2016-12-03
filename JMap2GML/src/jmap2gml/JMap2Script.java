@@ -64,7 +64,7 @@ public class JMap2Script {
             out.println("// blocks");
          }
 
-         str += "\n// blocks\n";
+         str += "var o;\n\n// blocks\n";
 
          while (blocks.hasNext()) {
             if (toFile) {

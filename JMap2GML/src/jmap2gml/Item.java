@@ -20,6 +20,7 @@ public class Item implements Comparable {
    protected double xScale, yScale;
    protected Color color1, color2;
    protected int depth;
+   protected String itemName;
 
    /**
     *
@@ -32,7 +33,8 @@ public class Item implements Comparable {
       x = Integer.parseInt(str[0]);
       y = Integer.parseInt(str[1]);
 
-      // initialize xScale, yScale, and depth
+      // initialize itenName, xScale, yScale, and depth
+      itemName = str[2];
       xScale = 1;
       yScale = 1;
       depth = 0;
@@ -159,9 +161,7 @@ public class Item implements Comparable {
                     new Color(0, 0, 0, 255),
                     99);
             break;
-
-         default:
-         // not a recognized object id
+            
          /*
                 * format for adding more:
                 *    setData(new int[] {x1,x2,...},
@@ -172,6 +172,9 @@ public class Item implements Comparable {
                 * Eventually, these values should be read from some external
                 * file.
           */
+
+         default:
+         // not a recognized object id
       }
    }
 

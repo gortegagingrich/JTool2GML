@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Arrays;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -24,7 +25,7 @@ import javax.swing.SwingUtilities;
 class Preview extends JPanel {
 
    private boolean showGrid;
-   private JPopupMenu rtClickMenu;
+   private final JPopupMenu rtClickMenu;
    private int selected;
 
    // holds all the supported items in the room.
@@ -44,6 +45,44 @@ class Preview extends JPanel {
       setVisible(true);
 
       rtClickMenu = new JPopupMenu();
+
+      JMenuItem itemSetX = new JMenuItem("set x");
+      itemSetX.addActionListener((ActionEvent ae) -> {
+         if (items.length > 0 && selected != -1 && items[selected] != null) {
+            int toX;
+
+            try {
+               toX = Integer.parseInt(JOptionPane.showInputDialog(
+                       items[selected].itemName + ".x: ", items[selected].x));
+               items[selected].x = toX;
+               selected = -1;
+               this.repaint();
+            } catch (Exception e) {
+               // do nothing
+            }
+         }
+      });
+      rtClickMenu.add(itemSetX);
+
+      JMenuItem itemSetY = new JMenuItem("set y");
+      itemSetY.addActionListener((ActionEvent ae) -> {
+         if (items.length > 0 && selected != -1 && items[selected] != null) {
+            int toY;
+
+            try {
+               toY = Integer.parseInt(JOptionPane.showInputDialog(
+                       items[selected].itemName + ".y: ", items[selected].y));
+               items[selected].y = toY;
+               selected = -1;
+               this.repaint();
+            } catch (Exception e) {
+               // do nothing
+            }
+         }
+      });
+      rtClickMenu.add(itemSetY);
+
+      rtClickMenu.addSeparator();
 
       JMenuItem del = new JMenuItem("delete");
       del.addActionListener((ActionEvent ae) -> {
@@ -110,7 +149,6 @@ class Preview extends JPanel {
 
                i++;
             } else if (s.charAt(0) == 'i' && s.length() >= 20) {
-               System.out.println(s);
                items[i] = new ItemFromFile(s.substring(16, end).split(","));
                i += 1;
             }
@@ -183,6 +221,7 @@ class Preview extends JPanel {
          this.prev = prev;
       }
 
+      @Override
       public void mouseReleased(MouseEvent e) {
 
          int xx, yy, index;
@@ -199,8 +238,8 @@ class Preview extends JPanel {
                   yArr = Arrays.copyOf(item.yArr, item.yArr.length);
 
                   for (int i = 0; i < xArr.length; i++) {
-                     xArr[i] = (int)((double)xArr[i] * item.xScale) + item.x;
-                     yArr[i] = (int)((double)yArr[i] * item.yScale) + item.y;;
+                     xArr[i] = (int) ((double) xArr[i] * item.xScale) + item.x;
+                     yArr[i] = (int) ((double) yArr[i] * item.yScale) + item.y;
                   }
 
                   hitbox = new Polygon(xArr, yArr, item.xArr.length);
