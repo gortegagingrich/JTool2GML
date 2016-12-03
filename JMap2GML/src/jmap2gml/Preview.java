@@ -8,25 +8,26 @@ package jmap2gml;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Polygon;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Arrays;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.SwingUtilities;
+import static jmap2gml.Preview.itemAttribute.YPOS;
 
 /**
  * JPanel used to provide a visual preview of the room
  */
 class Preview extends JPanel {
 
+   public enum itemAttribute {
+      XSCALE, YSCALE, XPOS, YPOS
+   };
+
    private boolean showGrid;
-   private final JPopupMenu rtClickMenu;
-   private int selected;
+   protected final JPopupMenu rtClickMenu;
+   protected int selected;
 
    // holds all the supported items in the room.
    protected Item[] items;
@@ -46,6 +47,38 @@ class Preview extends JPanel {
 
       rtClickMenu = new JPopupMenu();
 
+      JMenuItem itemXScale = new JMenuItem("set xScale");
+      itemXScale.addActionListener((ActionEvent ae) -> {
+         double toXscale;
+
+         try {
+            toXscale = Double.parseDouble(JOptionPane.showInputDialog(
+                    items[selected].itemName + ".xScale: ",
+                    items[selected].xScale));
+            modifyItem(itemAttribute.XSCALE, toXscale);
+         } catch (NumberFormatException e) {
+            // do nothing
+         }
+      });
+      rtClickMenu.add(itemXScale);
+
+      JMenuItem itemYScale = new JMenuItem("set yScale");
+      itemYScale.addActionListener((ActionEvent ae) -> {
+         double toYscale;
+
+         try {
+            toYscale = Double.parseDouble(JOptionPane.showInputDialog(
+                    items[selected].itemName + ".yScale: ",
+                    items[selected].yScale));
+            modifyItem(itemAttribute.YSCALE, toYscale);
+         } catch (NumberFormatException e) {
+            // do nothing
+         }
+      });
+      rtClickMenu.add(itemYScale);
+
+      rtClickMenu.addSeparator();
+
       JMenuItem itemSetX = new JMenuItem("set x");
       itemSetX.addActionListener((ActionEvent ae) -> {
          if (items.length > 0 && selected != -1 && items[selected] != null) {
@@ -54,10 +87,8 @@ class Preview extends JPanel {
             try {
                toX = Integer.parseInt(JOptionPane.showInputDialog(
                        items[selected].itemName + ".x: ", items[selected].x));
-               items[selected].x = toX;
-               selected = -1;
-               this.repaint();
-            } catch (Exception e) {
+               modifyItem(itemAttribute.XPOS, toX);
+            } catch (NumberFormatException e) {
                // do nothing
             }
          }
@@ -72,10 +103,8 @@ class Preview extends JPanel {
             try {
                toY = Integer.parseInt(JOptionPane.showInputDialog(
                        items[selected].itemName + ".y: ", items[selected].y));
-               items[selected].y = toY;
-               selected = -1;
-               this.repaint();
-            } catch (Exception e) {
+               modifyItem(itemAttribute.YPOS, toY);
+            } catch (NumberFormatException e) {
                // do nothing
             }
          }
@@ -160,6 +189,7 @@ class Preview extends JPanel {
 
    protected void toggleGrid() {
       showGrid = !showGrid;
+      repaint();
    }
 
    // todo: draw order should be based on depth
@@ -211,63 +241,34 @@ class Preview extends JPanel {
       return temp;
    }
 
-   private class PreviewMouseListener implements MouseListener {
-
-      private final Preview prev;
-
-      public PreviewMouseListener(Preview prev) {
-         super();
-
-         this.prev = prev;
+   /**
+    *
+    * @param atr attribute of the item to change
+    * @param value value to set it to (can get cast to int)
+    */
+   private void modifyItem(itemAttribute atr, double value) {
+      switch (atr) {
+         case XSCALE:
+            items[selected].xScale = value;
+            break;
+         case YSCALE:
+            items[selected].yScale = value;
+            break;
+         case XPOS:
+            items[selected].x = (int) value;
+            break;
+         case YPOS:
+            items[selected].y = (int) value;
+            break;
       }
 
-      @Override
-      public void mouseReleased(MouseEvent e) {
+      selected = -1;
+      repaint();
+   }
 
-         int xx, yy, index;
-         int[] xArr, yArr;
-         Polygon hitbox;
-         Item item;
+   private String scriptFromItems() {
+      String out = "";
 
-         if (SwingUtilities.isRightMouseButton(e)) {
-            for (index = 0; index < items.length; index++) {
-               item = items[index];
-
-               if (item != null) {
-                  xArr = Arrays.copyOf(item.xArr, item.xArr.length);
-                  yArr = Arrays.copyOf(item.yArr, item.yArr.length);
-
-                  for (int i = 0; i < xArr.length; i++) {
-                     xArr[i] = (int) ((double) xArr[i] * item.xScale) + item.x;
-                     yArr[i] = (int) ((double) yArr[i] * item.yScale) + item.y;
-                  }
-
-                  hitbox = new Polygon(xArr, yArr, item.xArr.length);
-
-                  if (hitbox.contains(e.getX(), e.getY())) {
-                     selected = index;
-                     rtClickMenu.show(prev, e.getX(), e.getY());
-                     break;
-                  }
-               }
-            }
-         }
-      }
-
-      @Override
-      public void mousePressed(MouseEvent me) {
-      }
-
-      @Override
-      public void mouseClicked(MouseEvent me) {
-      }
-
-      @Override
-      public void mouseEntered(MouseEvent me) {
-      }
-
-      @Override
-      public void mouseExited(MouseEvent me) {
-      }
+      return out;
    }
 }

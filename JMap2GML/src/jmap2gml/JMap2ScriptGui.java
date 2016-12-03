@@ -145,6 +145,12 @@ public class JMap2ScriptGui extends JFrame {
       });
 
       display.add(update);
+      
+      JMenuItem gridToggle = new JMenuItem("Toggle Grid");
+      gridToggle.addActionListener(ae -> {
+         drawPanel.toggleGrid();
+      });
+      display.add(gridToggle);
 
       menubar.add(display);
 
