@@ -19,10 +19,10 @@ public class JMap2GML {
 	public static void main(String[] args) {
 		if (args.length != 1) {
 			System.err.println("No arguments passed.\nUsing GUI.");
-			Runnable r = () -> new JMap2ScriptGui();
+			Runnable r = () -> new ScriptGui();
 			SwingUtilities.invokeLater(r);
 		} else {
-			new JMap2Script(args[0]);
+			new ScriptFromJmap(args[0]);
 		}
 	}
 

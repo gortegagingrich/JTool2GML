@@ -26,9 +26,9 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  *
  * @author Gabriel
  */
-public class JMap2ScriptGui extends JFrame {
+public class ScriptGui extends JFrame {
 
-	private JMap2Script jm2s;
+	private ScriptFromJmap jm2s;
 	private JTextArea jta;
 	private JMenuItem writeFile;
 	private Preview drawPanel;
@@ -38,7 +38,7 @@ public class JMap2ScriptGui extends JFrame {
 	 * Formats the window, initializes the JMap2Script object, and sets up all
 	 * the necessary events.
 	 */
-	public JMap2ScriptGui() {
+	public ScriptGui() {
 
 		try {
 			Scanner configReader = new Scanner(new File("MiscSettings"));
@@ -47,7 +47,7 @@ public class JMap2ScriptGui extends JFrame {
 
 			configReader.close();
 		} catch (Exception ex) {
-			Logger.getLogger(JMap2ScriptGui.class.getName()).
+			Logger.getLogger(ScriptGui.class.getName()).
 					  log(Level.SEVERE, null, ex);
 			prevDirectory = "";
 		}
@@ -92,11 +92,11 @@ public class JMap2ScriptGui extends JFrame {
 					writer.println(prevDirectory);
 					writer.close();
 				} catch (FileNotFoundException ex) {
-					Logger.getLogger(JMap2ScriptGui.class.getName()).
+					Logger.getLogger(ScriptGui.class.getName()).
 							  log(Level.SEVERE, null, ex);
 				}
 
-				jm2s = new JMap2Script(selectedFile.getPath(), false);
+				jm2s = new ScriptFromJmap(selectedFile.getPath(), false);
 
 				jta.setText("");
 				jta.append(jm2s.toString());
@@ -123,7 +123,7 @@ public class JMap2ScriptGui extends JFrame {
 					out.append(jm2s.toString());
 					out.close();
 				} catch (FileNotFoundException ex) {
-					Logger.getLogger(JMap2ScriptGui.class.getName()).
+					Logger.getLogger(ScriptGui.class.getName()).
 							  log(Level.SEVERE, null, ex);
 				}
 			}

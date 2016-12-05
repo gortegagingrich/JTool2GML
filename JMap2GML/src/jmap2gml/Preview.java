@@ -25,7 +25,7 @@ class Preview extends JPanel {
 		XSCALE, YSCALE, XPOS, YPOS
 	};
 
-	protected JMap2ScriptGui parent;
+	protected ScriptGui parent;
 	private boolean showGrid;
 	protected final JPopupMenu rtClickMenu;
 	protected int selected;
@@ -36,7 +36,7 @@ class Preview extends JPanel {
 	/**
 	 * currently initializes with a few items I used to test the draw methods
 	 */
-	protected Preview(JMap2ScriptGui parent) {
+	protected Preview(ScriptGui parent) {
 		this.parent = parent;
 
 		addMouseListener(new PreviewMouseListener(this));

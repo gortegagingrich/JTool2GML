@@ -13,7 +13,7 @@ import java.util.Scanner;
  *
  * @author Gabriel
  */
-public class JMap2Script {
+public class ScriptFromJmap {
 
 	private SimpleQueue queue;
 	private NotDequeue blocks;
@@ -29,7 +29,7 @@ public class JMap2Script {
 	 *
 	 * @param fName input file from args
 	 */
-	public JMap2Script(String fName) {
+	public ScriptFromJmap(String fName) {
 		this(fName, true);
 	}
 
@@ -40,7 +40,7 @@ public class JMap2Script {
 	 * @param fName
 	 * @param f
 	 */
-	public JMap2Script(String fName, boolean f) {
+	public ScriptFromJmap(String fName, boolean f) {
 		toFile = f;
 		this.fileName = fName;
 		queue = new SimpleQueue();
@@ -129,7 +129,7 @@ public class JMap2Script {
 	 * @param fName input file from args
 	 * @param f output file
 	 */
-	public JMap2Script(String fName, File f) {
+	public ScriptFromJmap(String fName, File f) {
 		this(fName, f, false);
 	}
 
@@ -140,7 +140,7 @@ public class JMap2Script {
 	 * @param f output file
 	 * @param reversePlatforms false = pop, true = remove
 	 */
-	public JMap2Script(String fName, File f, boolean reversePlatforms) {
+	public ScriptFromJmap(String fName, File f, boolean reversePlatforms) {
 		queue = new SimpleQueue();
 		blocks = new NotDequeue();
 		killers = new NotDequeue();
