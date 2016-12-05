@@ -13,17 +13,17 @@ import javax.swing.SwingUtilities;
  */
 public class JMap2GML {
 
-   /**
-    * @param args {inputfile}
-    */
-   public static void main(String[] args) {
-      if (args.length != 1) {
-         System.err.println("No arguments passed.\nUsing GUI.");
-         Runnable r = () -> new JMap2ScriptGui();
-         SwingUtilities.invokeLater(r);
-      } else {
-         new JMap2Script(args[0]);
-      }
-   }
+	/**
+	 * @param args {inputfile}
+	 */
+	public static void main(String[] args) {
+		if (args.length != 1) {
+			System.err.println("No arguments passed.\nUsing GUI.");
+			Runnable r = () -> new JMap2ScriptGui();
+			SwingUtilities.invokeLater(r);
+		} else {
+			new JMap2Script(args[0]);
+		}
+	}
 
 }

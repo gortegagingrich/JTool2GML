@@ -21,254 +21,260 @@ import static jmap2gml.Preview.itemAttribute.YPOS;
  */
 class Preview extends JPanel {
 
-   public enum itemAttribute {
-      XSCALE, YSCALE, XPOS, YPOS
-   };
+	public enum itemAttribute {
+		XSCALE, YSCALE, XPOS, YPOS
+	};
 
-   private boolean showGrid;
-   protected final JPopupMenu rtClickMenu;
-   protected int selected;
+	protected JMap2ScriptGui parent;
+	private boolean showGrid;
+	protected final JPopupMenu rtClickMenu;
+	protected int selected;
 
-   // holds all the supported items in the room.
-   protected Item[] items;
+	// holds all the supported items in the room.
+	protected Item[] items;
 
-   /**
-    * currently initializes with a few items I used to test the draw methods
-    */
-   protected Preview() {
-      addMouseListener(new PreviewMouseListener(this));
+	/**
+	 * currently initializes with a few items I used to test the draw methods
+	 */
+	protected Preview(JMap2ScriptGui parent) {
+		this.parent = parent;
 
-      items = new Item[]{};
-      showGrid = true;
-      selected = -1;
+		addMouseListener(new PreviewMouseListener(this));
 
-      setPreferredSize(new Dimension(800, 608));
-      setVisible(true);
+		items = new Item[]{};
+		showGrid = true;
+		selected = -1;
 
-      rtClickMenu = new JPopupMenu();
+		setPreferredSize(new Dimension(800, 608));
+		setVisible(true);
 
-      JMenuItem itemXScale = new JMenuItem("set xScale");
-      itemXScale.addActionListener((ActionEvent ae) -> {
-         double toXscale;
+		rtClickMenu = new JPopupMenu();
 
-         try {
-            toXscale = Double.parseDouble(JOptionPane.showInputDialog(
-                    items[selected].itemName + ".xScale: ",
-                    items[selected].xScale));
-            modifyItem(itemAttribute.XSCALE, toXscale);
-         } catch (NumberFormatException e) {
-            // do nothing
-         }
-      });
-      rtClickMenu.add(itemXScale);
+		JMenuItem itemXScale = new JMenuItem("set xScale");
+		itemXScale.addActionListener((ActionEvent ae) -> {
+			double toXscale;
 
-      JMenuItem itemYScale = new JMenuItem("set yScale");
-      itemYScale.addActionListener((ActionEvent ae) -> {
-         double toYscale;
+			try {
+				toXscale = Double.parseDouble(JOptionPane.showInputDialog(
+						  items[selected].itemName + ".xScale: ",
+						  items[selected].xScale));
+				modifyItem(itemAttribute.XSCALE, toXscale);
+				parent.updateScriptFromItems();
+			} catch (NumberFormatException | NullPointerException e) {
+				// do nothing
+			}
+		});
+		rtClickMenu.add(itemXScale);
 
-         try {
-            toYscale = Double.parseDouble(JOptionPane.showInputDialog(
-                    items[selected].itemName + ".yScale: ",
-                    items[selected].yScale));
-            modifyItem(itemAttribute.YSCALE, toYscale);
-         } catch (NumberFormatException e) {
-            // do nothing
-         }
-      });
-      rtClickMenu.add(itemYScale);
+		JMenuItem itemYScale = new JMenuItem("set yScale");
+		itemYScale.addActionListener((ActionEvent ae) -> {
+			double toYscale;
 
-      rtClickMenu.addSeparator();
+			try {
+				toYscale = Double.parseDouble(JOptionPane.showInputDialog(
+						  items[selected].itemName + ".yScale: ",
+						  items[selected].yScale));
+				modifyItem(itemAttribute.YSCALE, toYscale);
+				parent.updateScriptFromItems();
+			} catch (NumberFormatException | NullPointerException e) {
+				// do nothing
+			}
+		});
+		rtClickMenu.add(itemYScale);
 
-      JMenuItem itemSetX = new JMenuItem("set x");
-      itemSetX.addActionListener((ActionEvent ae) -> {
-         if (items.length > 0 && selected != -1 && items[selected] != null) {
-            int toX;
+		rtClickMenu.addSeparator();
 
-            try {
-               toX = Integer.parseInt(JOptionPane.showInputDialog(
-                       items[selected].itemName + ".x: ", items[selected].x));
-               modifyItem(itemAttribute.XPOS, toX);
-            } catch (NumberFormatException e) {
-               // do nothing
-            }
-         }
-      });
-      rtClickMenu.add(itemSetX);
+		JMenuItem itemSetX = new JMenuItem("set x");
+		itemSetX.addActionListener((ActionEvent ae) -> {
+			if (items.length > 0 && selected != -1 && items[selected] != null) {
+				int toX;
 
-      JMenuItem itemSetY = new JMenuItem("set y");
-      itemSetY.addActionListener((ActionEvent ae) -> {
-         if (items.length > 0 && selected != -1 && items[selected] != null) {
-            int toY;
+				try {
+					toX = Integer.parseInt(JOptionPane.showInputDialog(
+							  items[selected].itemName + ".x: ", items[selected].x));
+					modifyItem(itemAttribute.XPOS, toX);
+					parent.updateScriptFromItems();
+				} catch (NumberFormatException | NullPointerException e) {
+					// do nothing
+				}
+			}
+		});
+		rtClickMenu.add(itemSetX);
 
-            try {
-               toY = Integer.parseInt(JOptionPane.showInputDialog(
-                       items[selected].itemName + ".y: ", items[selected].y));
-               modifyItem(itemAttribute.YPOS, toY);
-            } catch (NumberFormatException e) {
-               // do nothing
-            }
-         }
-      });
-      rtClickMenu.add(itemSetY);
+		JMenuItem itemSetY = new JMenuItem("set y");
+		itemSetY.addActionListener((ActionEvent ae) -> {
+			if (items.length > 0 && selected != -1 && items[selected] != null) {
+				int toY;
 
-      rtClickMenu.addSeparator();
+				try {
+					toY = Integer.parseInt(JOptionPane.showInputDialog(
+							  items[selected].itemName + ".y: ", items[selected].y));
+					modifyItem(itemAttribute.YPOS, toY);
+					parent.updateScriptFromItems();
+				} catch (NumberFormatException | NullPointerException e) {
+					// do nothing
+				}
+			}
+		});
+		rtClickMenu.add(itemSetY);
 
-      JMenuItem del = new JMenuItem("delete");
-      del.addActionListener((ActionEvent ae) -> {
-         if (items.length > 0 && selected != -1 && items[selected] != null) {
-            items[selected] = null;
-            cleanArray(items);
-            selected = -1;
-            this.repaint();
-         }
-      });
-      rtClickMenu.add(del);
-   }
+		rtClickMenu.addSeparator();
 
-   /**
-    * Recreates the items array and adds each valid item that gets created by
-    * the script. Also supports simple use of variables to set xscale and
-    * yscale.
-    *
-    * @param str {{x,y,objID},...}
-    */
-   protected void setItems(String[] str) {
-      items = new Item[str.length];
-      int i = 0;
-      double d;
-      int end;
-      Item prev = null;
+		JMenuItem del = new JMenuItem("delete");
+		del.addActionListener((ActionEvent ae) -> {
+			removeItem();
+			parent.updateScriptFromItems();
+		});
+		rtClickMenu.add(del);
+	}
 
-      for (String s : str) {
-         end = (s.length() > 2 && s.charAt(s.length() - 1) == ';') ? (s.length()
-                 - 2) : (s.length() - 1);
+	/**
+	 * Recreates the items array and adds each valid item that gets created by
+	 * the script. Also supports simple use of variables to set xscale and
+	 * yscale.
+	 *
+	 * @param str {{x,y,objID},...}
+	 */
+	protected void setItems(String[] str) {
+		items = new Item[str.length];
+		int i = 0;
+		double d;
+		int end;
+		Item prev = null;
 
-         if (s.length() > 1) {
-            if (s.charAt(0) == 'o' && s.length() > 5) {
-               switch (s.charAt(1)) {
-                  case ' ': // o = insta...
-                     items[i] = new ItemFromFile(s.substring(20, end).split(","));
-                     prev = items[i];
-                     break;
+		for (String s : str) {
+			end = (s.length() > 2 && s.charAt(s.length() - 1) == ';') ? (s.length()
+					  - 2) : (s.length() - 1);
 
-                  case '.': // o.image_...
-                     if (prev != null) {
-                        switch (s.substring(2, 14)) {
-                           case "image_xscale":
-                              d = Double.parseDouble(s.split(" = ")[1].
-                                      split(";")[0]);
-                              prev.setXscale(d);
-                              break;
+			if (s.length() > 1) {
+				if (s.charAt(0) == 'o' && s.length() > 5) {
+					switch (s.charAt(1)) {
+						case ' ': // o = insta...
+							items[i] = new ItemFromFile(s.substring(20, end).split(","));
+							prev = items[i];
+							break;
 
-                           case "image_yscale":
-                              d = Double.parseDouble(s.split(" = ")[1].
-                                      split(";")[0]);
-                              prev.setYscale(d);
-                              break;
+						case '.': // o.image_...
+							if (prev != null) {
+								switch (s.substring(2, 14)) {
+									case "image_xscale":
+										d = Double.parseDouble(s.split(" = ")[1].
+												  split(";")[0]);
+										prev.setXscale(d);
+										break;
 
-                           default:
-                           // do nothing
-                        }
-                     }
-                     break;
+									case "image_yscale":
+										d = Double.parseDouble(s.split(" = ")[1].
+												  split(";")[0]);
+										prev.setYscale(d);
+										break;
 
-                  default:
-                  // do nothing
-               }
+									default:
+									// do nothing
+								}
+							}
+							break;
 
-               i++;
-            } else if (s.charAt(0) == 'i' && s.length() >= 20) {
-               items[i] = new ItemFromFile(s.substring(16, end).split(","));
-               i += 1;
-            }
-         }
-      }
+						default:
+						// do nothing
+					}
 
-      paintComponent(getGraphics());
-   }
+					i++;
+				} else if (s.charAt(0) == 'i' && s.length() >= 20) {
+					items[i] = new ItemFromFile(s.substring(16, end).split(","));
+					i += 1;
+				}
+			}
+		}
 
-   protected void toggleGrid() {
-      showGrid = !showGrid;
-      repaint();
-   }
+		paintComponent(getGraphics());
+	}
 
-   // todo: draw order should be based on depth
-   @Override
-   public void paintComponent(Graphics g) {
-      super.paintComponent(g);
-      Object[] temp;
+	protected void toggleGrid() {
+		showGrid = !showGrid;
+		repaint();
+	}
 
-      g.setColor(Color.WHITE);
-      g.fillRect(0, 0, 800, 608);
+	// todo: draw order should be based on depth
+	@Override
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Object[] temp;
 
-      if (showGrid) {
-         g.setColor(new Color(222, 222, 222, 255));
-         g.drawLine(0, 0, 0, 608);
-         g.drawLine(0, 0, 800, 0);
-         g.drawLine(800, 0, 800, 608);
-         g.drawLine(0, 608, 800, 608);
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, 800, 608);
 
-         for (int i = 31; i < 799; i += 32) {
-            g.drawRect(i, 0, 1, 608);
-         }
+		if (showGrid) {
+			g.setColor(new Color(222, 222, 222, 255));
+			g.drawLine(0, 0, 0, 608);
+			g.drawLine(0, 0, 800, 0);
+			g.drawLine(800, 0, 800, 608);
+			g.drawLine(0, 608, 800, 608);
 
-         for (int i = 31; i < 607; i += 32) {
-            g.drawRect(0, i, 800, 1);
-         }
-      }
+			for (int i = 31; i < 799; i += 32) {
+				g.drawRect(i, 0, 1, 608);
+			}
 
-      temp = Arrays.copyOf(items, items.length);
-      temp = cleanArray(temp);
-      Arrays.sort(temp);
+			for (int i = 31; i < 607; i += 32) {
+				g.drawRect(0, i, 800, 1);
+			}
+		}
 
-      for (Object i : temp) {
-         if (i != null) {
-            ((Item) i).draw(g);
-         }
-      }
-   }
+		temp = Arrays.copyOf(items, items.length);
+		temp = cleanArray(temp);
+		Arrays.sort(temp);
 
-   private Object[] cleanArray(Object[] arr) {
-      Object[] temp = new Object[]{};
+		for (Object i : temp) {
+			if (i != null) {
+				((Item) i).draw(g);
+			}
+		}
+	}
 
-      for (Object o : arr) {
-         if (o != null) {
-            temp = Arrays.copyOf(temp, temp.length + 1);
-            temp[temp.length - 1] = o;
-         }
-      }
+	private Object[] cleanArray(Object[] arr) {
+		Object[] temp = new Object[]{};
 
-      return temp;
-   }
+		for (Object o : arr) {
+			if (o != null) {
+				temp = Arrays.copyOf(temp, temp.length + 1);
+				temp[temp.length - 1] = o;
+			}
+		}
 
-   /**
-    *
-    * @param atr attribute of the item to change
-    * @param value value to set it to (can get cast to int)
-    */
-   private void modifyItem(itemAttribute atr, double value) {
-      switch (atr) {
-         case XSCALE:
-            items[selected].xScale = value;
-            break;
-         case YSCALE:
-            items[selected].yScale = value;
-            break;
-         case XPOS:
-            items[selected].x = (int) value;
-            break;
-         case YPOS:
-            items[selected].y = (int) value;
-            break;
-      }
+		return temp;
+	}
 
-      selected = -1;
-      repaint();
-   }
+	/**
+	 *
+	 * @param atr attribute of the item to change
+	 * @param value value to set it to (can get cast to int)
+	 */
+	protected void modifyItem(itemAttribute atr, double value) {
+		switch (atr) {
+			case XSCALE:
+				items[selected].xScale = value;
+				break;
+			case YSCALE:
+				items[selected].yScale = value;
+				break;
+			case XPOS:
+				items[selected].x = (int) value;
+				break;
+			case YPOS:
+				items[selected].y = (int) value;
+				break;
+		}
 
-   private String scriptFromItems() {
-      String out = "";
+		selected = -1;
+		repaint();
+	}
 
-      return out;
-   }
+	protected void removeItem() {
+		if (items.length > 0 && selected != -1 && items[selected] != null) {
+			items[selected] = null;
+			cleanArray(items);
+			selected = -1;
+			this.repaint();
+		}
+	}
 }
