@@ -5,7 +5,8 @@
  */
 package jmap2gml;
 
-import java.awt.GridLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -53,11 +54,14 @@ public class ScriptGui extends JFrame {
 
 		setTitle("jmap to gml script converter");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		getContentPane().setLayout(new GridLayout(1, 2));
+		getContentPane().setLayout(new GridBagLayout());
+		
+		GridBagConstraints c = new GridBagConstraints();
+		
 		setResizable(true);
 		setIconImage((new ImageIcon("spikeup.png")).getImage());
 
-		jta = new JTextArea(30, 40);
+		jta = new JTextArea(38, 30);
 		readInputFile();
 
 		JScrollPane jsp = new JScrollPane(jta);
@@ -65,6 +69,7 @@ public class ScriptGui extends JFrame {
 		jsp.setHorizontalScrollBarPolicy(
 				  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		jsp.setSize(jsp.getWidth(), 608);
 
 		// menu bar
 		JMenuBar menubar = new JMenuBar();
@@ -164,7 +169,9 @@ public class ScriptGui extends JFrame {
 		setJMenuBar(menubar);
 
 		// add the text area to the window
-		add(jsp);
+		c.gridx = 0;
+		c.gridy = 0;
+		add(jsp, c);
 
 		// initialize the preview panel
 		drawPanel = new Preview(this);
@@ -177,7 +184,9 @@ public class ScriptGui extends JFrame {
 		//        JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		//scrollPane.setVerticalScrollBarPolicy(
 		//        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-		add(scrollPane, 1);
+		c.gridx = 1;
+		c.gridwidth = 2;
+		add(scrollPane, c);
 
 		pack();
 		setVisible(true);
