@@ -5,8 +5,6 @@
  */
 package jmap2gml;
 
-import java.util.Arrays;
-
 /**
  *
  * @author Gabriel
@@ -25,8 +23,6 @@ public class ScriptFromItem {
 		killers = new NotDequeue();
 		platforms = new NotDequeue();
 		other = new NotDequeue();
-
-		System.out.println(Arrays.toString(itemList));
 
 		for (Item item : itemList) {
 			if (item != null) {

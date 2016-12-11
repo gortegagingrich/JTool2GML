@@ -34,8 +34,6 @@ class NotDequeue {
 			data[i] = data[data.length - 1 - i];
 			data[data.length - 1 - i] = temp;
 		}
-
-		System.out.printf("Enqueued: %s\n", l);
 	}
 
 	/**

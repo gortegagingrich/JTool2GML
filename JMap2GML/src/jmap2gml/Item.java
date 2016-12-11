@@ -22,8 +22,6 @@ public class Item implements Comparable {
 	 * @param str {x,y,ID}
 	 */
 	public Item(String[] str) {
-		assert (str.length == 3);
-
 		// set origin
 		x = Integer.parseInt(str[0]);
 		y = Integer.parseInt(str[1]);

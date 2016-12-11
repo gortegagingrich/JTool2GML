@@ -7,13 +7,16 @@ package jmap2gml;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
 import static jmap2gml.Preview.itemAttribute.YPOS;
 
 /**
@@ -29,6 +32,7 @@ class Preview extends JPanel {
 	private boolean showGrid;
 	protected final JPopupMenu rtClickMenu;
 	protected int selected;
+	private int gridX, gridY;
 
 	// holds all the supported items in the room.
 	protected Item[] items;
@@ -38,6 +42,9 @@ class Preview extends JPanel {
 	 */
 	protected Preview(ScriptGui parent) {
 		this.parent = parent;
+		
+		gridX = 32;
+		gridY = 32;
 
 		addMouseListener(new PreviewMouseListener(this));
 
@@ -150,7 +157,7 @@ class Preview extends JPanel {
 				if (s.charAt(0) == 'o' && s.length() > 5) {
 					switch (s.charAt(1)) {
 						case ' ': // o = insta...
-							items[i] = new ItemFromFile(s.substring(20, end).split(","));
+							items[i] = new ItemImage(s.substring(20, end).split(","));
 							prev = items[i];
 							break;
 
@@ -181,7 +188,7 @@ class Preview extends JPanel {
 
 					i++;
 				} else if (s.charAt(0) == 'i' && s.length() >= 20) {
-					items[i] = new ItemFromFile(s.substring(16, end).split(","));
+					items[i] = new ItemImage(s.substring(16, end).split(","));
 					i += 1;
 				}
 			}
@@ -211,11 +218,11 @@ class Preview extends JPanel {
 			g.drawLine(800, 0, 800, 608);
 			g.drawLine(0, 608, 800, 608);
 
-			for (int i = 31; i < 799; i += 32) {
+			for (int i = gridX-1; i < 799; i += gridX) {
 				g.drawRect(i, 0, 1, 608);
 			}
 
-			for (int i = 31; i < 607; i += 32) {
+			for (int i = gridY-1; i < 607; i += gridY) {
 				g.drawRect(0, i, 800, 1);
 			}
 		}
@@ -275,6 +282,32 @@ class Preview extends JPanel {
 			cleanArray(items);
 			selected = -1;
 			this.repaint();
+		}
+	}
+	
+	public void modifyGrid() {
+		// grid stuff
+		JPanel gridOptions = new JPanel();
+		JTextField gridXField = new JTextField(gridX);
+		JTextField gridYField = new JTextField(gridY);
+		
+		gridOptions.setLayout(new FlowLayout());
+		
+		gridOptions.add(new JLabel("X: "));
+		gridOptions.add(gridXField);
+		gridOptions.add(new JLabel("Y: "));
+		gridOptions.add(gridYField);
+		
+		JOptionPane.showConfirmDialog(null, gridOptions, 
+               "Modify Grid", JOptionPane.PLAIN_MESSAGE);
+		
+		try {
+			gridX = Integer.parseInt(gridXField.getText());
+			gridY = Integer.parseInt(gridYField.getText());
+		} catch (Exception e) {
+			// do nothing
+		} finally {
+			repaint();
 		}
 	}
 }

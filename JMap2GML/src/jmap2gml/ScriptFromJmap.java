@@ -186,6 +186,7 @@ public class ScriptFromJmap {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return str;
 	}
@@ -198,30 +199,29 @@ public class ScriptFromJmap {
 	 */
 	private void readFile(String fName) throws Exception {
 		File file = new File(fName);
-		Scanner in = new Scanner(file);
-		String str = "";
-		int[] temp = null;
-
-		for (int i = 0; i < 5; i++) {
-			str = in.nextLine();
-		}
-
-		int i = 0;
-
-		for (String s : str.split(" ")) {
-			if (i % 3 == 0) {
-				if (temp != null) {
-					queue.enqueue(temp);
-				}
-				temp = new int[3];
-				i = 0;
+		try (Scanner in = new Scanner(file)) {
+			String line = "";
+			int[] temp = null;
+			
+			for (int i = 0; i < 5; i++) {
+				line = in.nextLine();
 			}
-
-			temp[i++] = Integer.parseInt(s);
+			
+			int i = 0;
+			
+			for (String s : line.split(" ")) {
+				if (i % 3 == 0) {
+					if (temp != null) {
+						queue.enqueue(temp);
+					}
+					temp = new int[3];
+					i = 0;
+				}
+				
+				temp[i++] = Integer.parseInt(s);
+			}
+			queue.enqueue(temp);
 		}
-		queue.enqueue(temp);
-
-		in.close();
 	}
 
 	/**

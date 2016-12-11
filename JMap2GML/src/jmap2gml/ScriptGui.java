@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -46,9 +47,7 @@ public class ScriptGui extends JFrame {
 			prevDirectory = configReader.nextLine();
 
 			configReader.close();
-		} catch (Exception ex) {
-			Logger.getLogger(ScriptGui.class.getName()).
-					  log(Level.SEVERE, null, ex);
+		} catch (FileNotFoundException ex) {
 			prevDirectory = "";
 		}
 
@@ -56,6 +55,7 @@ public class ScriptGui extends JFrame {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		getContentPane().setLayout(new GridLayout(1, 2));
 		setResizable(true);
+		setIconImage((new ImageIcon("spikeup.png")).getImage());
 
 		jta = new JTextArea(30, 40);
 		readInputFile();
@@ -151,6 +151,12 @@ public class ScriptGui extends JFrame {
 			drawPanel.toggleGrid();
 		});
 		display.add(gridToggle);
+		
+		JMenuItem gridOptions = new JMenuItem("Modify Grid");
+		gridOptions.addActionListener(ae -> {
+			drawPanel.modifyGrid();
+		});
+		display.add(gridOptions);
 
 		menubar.add(display);
 
@@ -186,7 +192,7 @@ public class ScriptGui extends JFrame {
 			while (scan.hasNext()) {
 				jta.append(scan.nextLine() + "\n");
 			}
-		} catch (Exception e) {
+		} catch (FileNotFoundException e) {
 
 		}
 	}
