@@ -67,7 +67,7 @@ public class ScriptGui extends JFrame {
 		JScrollPane jsp = new JScrollPane(jta);
 		jsp.setRowHeaderView(new TextLineNumber(jta));
 		jsp.setHorizontalScrollBarPolicy(
-				  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				  JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		jsp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		jsp.setSize(jsp.getWidth(), 608);
 
@@ -189,6 +189,7 @@ public class ScriptGui extends JFrame {
 		add(scrollPane, c);
 
 		pack();
+		setLocationRelativeTo(null);
 		setVisible(true);
 		drawPanel.setItems(jta.getText().split("\n"));
 	}

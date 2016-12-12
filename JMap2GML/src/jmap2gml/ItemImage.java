@@ -8,6 +8,7 @@ package jmap2gml;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
+import java.util.HashMap;
 import java.util.Scanner;
 import javax.swing.ImageIcon;
 
@@ -17,7 +18,7 @@ import javax.swing.ImageIcon;
  */
 public class ItemImage extends ItemFromFile {
 
-	private Image img;
+	private static final HashMap<String, Image> images = new HashMap<>();
 
 	public ItemImage(String[] str) {
 		super(str);
@@ -27,6 +28,8 @@ public class ItemImage extends ItemFromFile {
 
 	@Override
 	public void draw(Graphics g) {
+		Image img = images.get(itemName);
+		
 		if (img != null) {
 			int width, height;
 
@@ -43,6 +46,7 @@ public class ItemImage extends ItemFromFile {
 		Scanner scan;
 		File file;
 		String[] line;
+		Image img;
 		
 		file = new File("ImageItemConfig");
 		
@@ -54,6 +58,9 @@ public class ItemImage extends ItemFromFile {
 				
 				if (line.length == 2 && line[0].equals(itemName)) {
 					img = (new ImageIcon(line[1])).getImage();
+					if (!images.containsKey(itemName)) {
+						images.put(itemName, img);
+					}
 					break;
 				}
 			}
