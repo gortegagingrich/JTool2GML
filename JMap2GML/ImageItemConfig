@@ -1,0 +1,21 @@
+
+{
+	"objSpikeUp":"spikeup.png",
+	"objSpikeRight":"spikeright.png",
+	"objSpikeLeft":"spikeleft.png",
+	"objSpikeDown":"spikedown.png",
+	"objBlock":"block.png",
+	"objMiniBlock":"miniBlock.png",
+	"objMiniUp":"miniup.png",
+	"objMiniRight":"miniright.png",
+	"objMiniLeft":"minileft.png",
+	"objMiniDown":"minidown.png",
+	"objWater2":"water2.png",
+	"objWarpAutosaveNext":"warp.png",
+	"objWarp":"warp.png",
+	"objWarpNext":"warp.png",
+	"objSave":"save.png",
+        "objCherry":"cherry.png",
+        "objCherryXOFFSET":-12,
+        "objCherryYOFFSET":-12
+}

@@ -116,18 +116,6 @@ public class ScriptGui extends JFrame {
 
 				prevDirectory = selectedFile.getAbsolutePath();
 
-				PrintWriter writer;
-				try {
-					writer = new PrintWriter(new File("MiscSettings"));
-					writer.println(prevDirectory);
-					writer.close();
-
-					saveConfig();
-				} catch (FileNotFoundException ex) {
-					Logger.getLogger(ScriptGui.class.getName()).
-							  log(Level.SEVERE, null, ex);
-				}
-
 				jm2s = new ScriptFromJmap(selectedFile.getPath(), false);
 
 				jta.setText("");
