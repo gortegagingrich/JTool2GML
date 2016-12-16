@@ -57,25 +57,25 @@ public class ScriptFromItem {
 
 	@Override
 	public String toString() {
-		String out = "var o;\n\n//blocks\n";
+		String out = "var o;\n\n// blocks\n";
 
 		while (blocks.hasNext()) {
 			out += blocks.pop();
 		}
 
-		out += "\n//killers\n";
+		out += "\n// killers\n";
 
 		while (killers.hasNext()) {
 			out += killers.pop();
 		}
 
-		out += "\n//platforms\n";
+		out += "\n// platforms\n";
 
 		while (platforms.hasNext()) {
 			out += platforms.pop();
 		}
 
-		out += "\n//other objects\n";
+		out += "\n// other objects\n";
 
 		while (other.hasNext()) {
 			out += other.pop();

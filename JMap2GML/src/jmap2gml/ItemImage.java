@@ -10,7 +10,10 @@ import java.awt.Image;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import org.json.JSONObject;
 
 /**
  *
@@ -18,56 +21,70 @@ import javax.swing.ImageIcon;
  */
 public class ItemImage extends ItemFromFile {
 
-	private static final HashMap<String, Image> images = new HashMap<>();
+	private static final HashMap<String, Image> IMAGES = readConfig();
+	private static String JSONTEXT;
+	private static JSONObject config;
 
 	public ItemImage(String[] str) {
 		super(str);
-
-		parseFile();
 	}
 
 	@Override
 	public void draw(Graphics g) {
-		Image img = images.get(itemName);
-		
+		Image img = IMAGES.get(itemName);
+
+		int xOffset, yOffset;
+
+		if (config.has(itemName + "XOFFSET")) {
+			xOffset = config.getInt(itemName + "XOFFSET");
+		} else {
+			xOffset = 0;
+		}
+
+		if (config.has(itemName + "YOFFSET")) {
+			yOffset = config.getInt(itemName + "YOFFSET");
+		} else {
+			yOffset = 0;
+		}
+
 		if (img != null) {
 			int width, height;
 
 			width = (int) (img.getWidth(null) * xScale);
 			height = (int) (img.getHeight(null) * yScale);
 
-			g.drawImage(img, x, y, width, height, null);
+			g.drawImage(img, x + xOffset, y + yOffset, width, height, null);
 		} else {
 			super.draw(g);
 		}
 	}
-	
-	private void parseFile() {
-		Scanner scan;
-		File file;
-		String[] line;
+
+	private static HashMap<String, Image> readConfig() {
+		HashMap<String, Image> out = new HashMap<>();
+		JSONTEXT = "";
 		Image img;
-		
-		file = new File("ImageItemConfig");
-		
+
+		Scanner scan;
 		try {
-			scan = new Scanner(file);
-			
+			scan = new Scanner(new File("ImageItemConfig"));
+
 			while (scan.hasNext()) {
-				line = scan.nextLine().split(";");
-				
-				if (line.length == 2 && line[0].equals(itemName)) {
-					img = (new ImageIcon(line[1])).getImage();
-					if (!images.containsKey(itemName)) {
-						images.put(itemName, img);
-					}
-					break;
+				JSONTEXT += scan.nextLine();
+			}
+
+			config = new JSONObject(JSONTEXT);
+
+			for (String str : config.keySet()) {
+				if (!str.contains("XOFFSET") && !str.contains("YOFFSET")) {
+					img = (new ImageIcon(config.getString(str))).getImage();
+					out.put(str, img);
 				}
 			}
-			
-			scan.close();
-		} catch (Exception e) {
-			// For exceptions stemming from files not existing or improper format
+		} catch (Exception ex) {
+			Logger.getLogger(ItemImage.class.getName()).log(Level.SEVERE, null, ex);
 		}
+
+		return out;
 	}
+
 }

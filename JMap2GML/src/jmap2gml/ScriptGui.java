@@ -7,6 +7,8 @@ package jmap2gml;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -22,6 +24,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * JFrame that serves as a GUI for the parser
@@ -41,28 +45,49 @@ public class ScriptGui extends JFrame {
 	 * the necessary events.
 	 */
 	public ScriptGui() {
-
-		try {
-			Scanner configReader = new Scanner(new File("MiscSettings"));
-
-			prevDirectory = configReader.nextLine();
-
-			configReader.close();
-		} catch (FileNotFoundException ex) {
-			prevDirectory = "";
-		}
-
 		setTitle("jmap to gml script converter");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		getContentPane().setLayout(new GridBagLayout());
-		
+
+		this.addWindowListener(new WindowListener() {
+			@Override
+			public void windowOpened(WindowEvent we) {
+			}
+
+			@Override
+			public void windowClosing(WindowEvent we) {
+				saveConfig();
+			}
+
+			@Override
+			public void windowClosed(WindowEvent we) {
+			}
+
+			@Override
+			public void windowIconified(WindowEvent we) {
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent we) {
+			}
+
+			@Override
+			public void windowActivated(WindowEvent we) {
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent we) {
+			}
+		});
+
 		GridBagConstraints c = new GridBagConstraints();
-		
+
 		setResizable(true);
 		setIconImage((new ImageIcon("spikeup.png")).getImage());
 
 		jta = new JTextArea(38, 30);
-		readInputFile();
+
+		loadConfig();
 
 		JScrollPane jsp = new JScrollPane(jta);
 		jsp.setRowHeaderView(new TextLineNumber(jta));
@@ -96,6 +121,8 @@ public class ScriptGui extends JFrame {
 					writer = new PrintWriter(new File("MiscSettings"));
 					writer.println(prevDirectory);
 					writer.close();
+
+					saveConfig();
 				} catch (FileNotFoundException ex) {
 					Logger.getLogger(ScriptGui.class.getName()).
 							  log(Level.SEVERE, null, ex);
@@ -105,6 +132,7 @@ public class ScriptGui extends JFrame {
 
 				jta.setText("");
 				jta.append(jm2s.toString());
+				jta.setCaretPosition(0);
 
 				writeFile.setEnabled(true);
 
@@ -156,7 +184,7 @@ public class ScriptGui extends JFrame {
 			drawPanel.toggleGrid();
 		});
 		display.add(gridToggle);
-		
+
 		JMenuItem gridOptions = new JMenuItem("Modify Grid");
 		gridOptions.addActionListener(ae -> {
 			drawPanel.modifyGrid();
@@ -178,12 +206,6 @@ public class ScriptGui extends JFrame {
 		JScrollPane scrollPane = new JScrollPane(drawPanel);
 
 		// add preview panel to the window
-		//scrollPane.setHorizontalScrollBar(scrollPane.createHorizontalScrollBar());
-		//scrollPane.setVerticalScrollBar(scrollPane.createVerticalScrollBar());
-		//scrollPane.setHorizontalScrollBarPolicy(
-		//        JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		//scrollPane.setVerticalScrollBarPolicy(
-		//        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		c.gridx = 1;
 		c.gridwidth = 2;
 		add(scrollPane, c);
@@ -194,20 +216,39 @@ public class ScriptGui extends JFrame {
 		drawPanel.setItems(jta.getText().split("\n"));
 	}
 
-	private void readInputFile() {
+	public void updateScriptFromItems() {
+		jta.setText((new ScriptFromItem(drawPanel.items)).toString());
+		jta.setCaretPosition(0);
+	}
+
+	private void saveConfig() {
+		JSONObject config = new JSONObject();
+
+		config.put("WindowX", this.getLocationOnScreen().x);
+		config.put("WindowY", this.getLocationOnScreen().y);
+		config.put("PrevFile", prevDirectory);
+		config.put("PrevScript", jta.getText());
+
 		try {
-			File f = new File("SampleScript");
-			Scanner scan = new Scanner(f);
-
-			while (scan.hasNext()) {
-				jta.append(scan.nextLine() + "\n");
+			try (PrintWriter out = new PrintWriter(new File("config"))) {
+				out.write(config.toString());
 			}
-		} catch (FileNotFoundException e) {
-
+		} catch (FileNotFoundException ex) {
+			//
 		}
 	}
 
-	public void updateScriptFromItems() {
-		jta.setText((new ScriptFromItem(drawPanel.items)).toString());
+	private void loadConfig() {
+		try {
+			Scanner scan = new Scanner(new File("config"));
+
+			JSONObject config = new JSONObject(scan.nextLine());
+			this.setLocation(config.getInt("WindowX"), config.getInt("WindowY"));
+			prevDirectory = config.getString("PrevFile");
+			jta.setText(config.getString("PrevScript"));
+			jta.setCaretPosition(0);
+
+		} catch (FileNotFoundException | JSONException ex) {
+		}
 	}
 }

@@ -7,8 +7,9 @@ package jmap2gml;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import javax.swing.JLabel;
@@ -288,17 +289,25 @@ class Preview extends JPanel {
 	public void modifyGrid() {
 		// grid stuff
 		JPanel gridOptions = new JPanel();
-		JTextField gridXField = new JTextField(gridX);
-		JTextField gridYField = new JTextField(gridY);
+		JTextField gridXField = new JTextField(Integer.toString(gridX),16);
+		JTextField gridYField = new JTextField(Integer.toString(gridY),16);
 		
-		gridOptions.setLayout(new FlowLayout());
+		gridOptions.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
 		
-		gridOptions.add(new JLabel("X: "));
-		gridOptions.add(gridXField);
-		gridOptions.add(new JLabel("Y: "));
-		gridOptions.add(gridYField);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.gridheight = 1;
+		gridOptions.add(new JLabel("X: "),c);
+		c.gridx = 1;
+		gridOptions.add(gridXField,c);
+		c.gridx = 0;
+		c.gridy = 1;
+		gridOptions.add(new JLabel("Y: "),c);
+		c.gridx = 1;
+		gridOptions.add(gridYField,c);
 		
-		JOptionPane.showConfirmDialog(null, gridOptions, 
+		JOptionPane.showMessageDialog(null, gridOptions, 
                "Modify Grid", JOptionPane.PLAIN_MESSAGE);
 		
 		try {
