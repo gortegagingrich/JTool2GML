@@ -150,13 +150,23 @@ public class ScriptGui extends JFrame {
 			}
 		});
 		writeFile.setEnabled(false);
+		
+		JMenuItem gmx = new JMenuItem("Export as gmx");
+		gmx.addActionListener(ae -> {
+			XMLWriter.itemsToGMX(drawPanel.items, System.out);
+		});
 
 		// add to file menu
 		file.add(writeFile);
+		file.add(gmx);
 
 		// add file menu to the menubar
 		menubar.add(file);
-
+		
+		// Edit menu
+		
+		
+		// display menu
 		JMenu display = new JMenu("Display");
 
 		JMenuItem update = new JMenuItem("Update");
@@ -199,6 +209,7 @@ public class ScriptGui extends JFrame {
 		add(scrollPane, c);
 
 		pack();
+		setMinimumSize(this.getSize());
 		setLocationRelativeTo(null);
 		setVisible(true);
 		drawPanel.setItems(jta.getText().split("\n"));

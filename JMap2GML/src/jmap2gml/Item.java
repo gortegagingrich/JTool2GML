@@ -16,6 +16,7 @@ public class Item implements Comparable {
 	protected Color color1, color2;
 	protected int depth;
 	protected String itemName;
+	protected String creationCode;
 
 	/**
 	 *
@@ -31,6 +32,7 @@ public class Item implements Comparable {
 		xScale = 1;
 		yScale = 1;
 		depth = 0;
+		creationCode = "";
 
 		// initialize data relevent to drawing the item
 		// these should eventually be read from some sort of external file
@@ -242,6 +244,10 @@ public class Item implements Comparable {
 		this.yArr = Arrays.copyOf(yArr, yArr.length);
 		depth = d;
 		setColors(c1, c2);
+	}
+	
+	public void setCreationCode(String code) {
+		creationCode = code;
 	}
 
 	@Override

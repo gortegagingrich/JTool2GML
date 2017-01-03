@@ -17,6 +17,7 @@ public class JMap2GML {
 	 * @param args {inputfile}
 	 */
 	public static void main(String[] args) {
+		
 		if (args.length != 1) {
 			System.err.println("No arguments passed.\nUsing GUI.");
 			Runnable r = () -> new ScriptGui();

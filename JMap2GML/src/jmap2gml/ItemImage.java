@@ -21,7 +21,7 @@ import org.json.JSONObject;
  */
 public class ItemImage extends ItemFromFile {
 
-	private static final HashMap<String, Image> IMAGES = readConfig();
+	public static final HashMap<String, Image> IMAGES = readConfig();
 	private static String JSONTEXT;
 	private static JSONObject config;
 

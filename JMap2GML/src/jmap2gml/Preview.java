@@ -127,6 +127,21 @@ class Preview extends JPanel {
 		rtClickMenu.add(itemSetY);
 
 		rtClickMenu.addSeparator();
+		
+		// creation code
+		
+		JMenuItem creationCode = new JMenuItem("Edit Creation Code");
+		creationCode.addActionListener((ActionEvent ae) -> {
+			// create popup window that lets you edit creation code
+			if (items.length > 0 && selected != -1 && items[selected] != null) {
+				String code = JOptionPane.showInputDialog("Creation Code:", items[selected].creationCode);
+				items[selected].setCreationCode(code);
+				System.out.println(items[selected].creationCode);
+			}
+		});
+		rtClickMenu.add(creationCode);
+		
+		rtClickMenu.addSeparator();
 
 		JMenuItem del = new JMenuItem("delete");
 		del.addActionListener((ActionEvent ae) -> {
