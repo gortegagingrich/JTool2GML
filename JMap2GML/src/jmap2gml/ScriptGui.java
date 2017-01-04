@@ -11,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -139,7 +140,6 @@ public class ScriptGui extends JFrame {
 				try {
 					File f = new File(jm2s.getFileName().substring(0, jm2s.
 							  getFileName().lastIndexOf(".jmap")) + ".gml");
-					System.out.println(f.getPath());
 					out = new PrintWriter(f);
 					out.append(jm2s.toString());
 					out.close();
@@ -153,7 +153,23 @@ public class ScriptGui extends JFrame {
 		
 		JMenuItem gmx = new JMenuItem("Export as gmx");
 		gmx.addActionListener(ae -> {
-			XMLWriter.itemsToGMX(drawPanel.items, System.out);
+			String fn = String.format("%s.room.gmx",prevDirectory);
+			
+			JFileChooser fc = new JFileChooser(prevDirectory);
+			fc.setSelectedFile(new File(fn));
+			fc.setFileFilter(new FileNameExtensionFilter("Game Maker XML",
+					  "gmx", "gmx"));
+			fc.showDialog(null,"Save");
+			File f = fc.getSelectedFile();
+			
+			if (f != null) {
+				try {
+					XMLWriter.itemsToGMX(drawPanel.items, new FileOutputStream(f));
+				} catch (FileNotFoundException ex) {
+					Logger.getLogger(ScriptGui.class.getName()).
+							  log(Level.SEVERE, null, ex);
+				}
+			}
 		});
 
 		// add to file menu

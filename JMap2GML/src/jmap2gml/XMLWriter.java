@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
@@ -27,16 +26,18 @@ public class XMLWriter {
 	 * external xml file as a references and adds instances for each item.
 	 *
 	 * @param items array of items from preview
+	 * @param os stream to write xml string to
 	 */
 	public static void itemsToGMX(Item[] items, OutputStream os) {
-		String itemPrefix = String.format("inst_%d", System.currentTimeMillis());
+		String prefix = String.format("inst_%d", System.currentTimeMillis());
 
 		SAXBuilder saxBuilder = new SAXBuilder();
-		int itemCount = 0;
+		int count = 0;
 
 		try {
-			Document doc = saxBuilder.build(new File("template.xml"));
-			Element instances = doc.getRootElement().getChild("instances");
+			Element room = saxBuilder.build(new File("template.xml")).
+					  getRootElement();
+			Element instances = room.getChild("instances");
 
 			for (Item item : items) {
 				if (item != null) {
@@ -44,8 +45,8 @@ public class XMLWriter {
 							  .setAttribute("objName", item.itemName)
 							  .setAttribute("x", Integer.toString(item.x))
 							  .setAttribute("y", Integer.toString(item.y))
-							  .setAttribute("name", String.format("%s%d", itemPrefix,
-										 itemCount++))
+							  .setAttribute("name", String.format("%s%d", prefix,
+										 count++))
 							  .setAttribute("locked", "0")
 							  .setAttribute("code", item.creationCode)
 							  .setAttribute("scaleX", Double.toString(item.xScale))
@@ -58,10 +59,9 @@ public class XMLWriter {
 			}
 
 			XMLOutputter out = new XMLOutputter();
-			out.output(doc.getRootElement(), os);
+			out.output(room, os);
 
-		} catch (JDOMException ex) {
-		} catch (IOException ex) {
+		} catch (JDOMException | IOException ex) {
 		}
 	}
 
