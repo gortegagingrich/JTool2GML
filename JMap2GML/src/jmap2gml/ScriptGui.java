@@ -164,7 +164,7 @@ public class ScriptGui extends JFrame {
 			
 			if (f != null) {
 				try {
-					XMLWriter.itemsToGMX(drawPanel.items, new FileOutputStream(f));
+					GMX.itemsToGMX(drawPanel.items, new FileOutputStream(f));
 				} catch (FileNotFoundException ex) {
 					Logger.getLogger(ScriptGui.class.getName()).
 							  log(Level.SEVERE, null, ex);
