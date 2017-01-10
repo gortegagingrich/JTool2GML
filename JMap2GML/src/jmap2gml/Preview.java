@@ -34,6 +34,7 @@ class Preview extends JPanel {
 	protected final JPopupMenu rtClickMenu;
 	protected int selected;
 	private int gridX, gridY;
+	protected final Palette pal;
 
 	// holds all the supported items in the room.
 	protected Item[] items;
@@ -44,10 +45,14 @@ class Preview extends JPanel {
 	protected Preview(ScriptGui parent) {
 		this.parent = parent;
 		
+		pal = new Palette(this);
+		
 		gridX = 32;
 		gridY = 32;
 
-		addMouseListener(new PreviewMouseListener(this));
+		PreviewListener listener = new PreviewListener(this);
+		
+		addMouseListener(listener);
 
 		items = new Item[]{};
 		showGrid = true;
@@ -252,6 +257,10 @@ class Preview extends JPanel {
 				((Item) i).draw(g);
 			}
 		}
+		
+		pal.draw(g);
+		
+		System.gc();
 	}
 
 	private Object[] cleanArray(Object[] arr) {
